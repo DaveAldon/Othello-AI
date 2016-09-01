@@ -1,0 +1,7 @@
+*.userprefs
+*.exe
+*.exe.mdb
+AssemblyInfo.cs
+*.txt
+Debug/
+Bin/
