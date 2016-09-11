@@ -4,17 +4,18 @@ namespace OthelloAI
 {
 	class MainClass
 	{
-		public int[,] GameBoard = new int[8, 8];
+		public const int _SIZE = 8;
+		public int[,] GameBoard = new int[_SIZE, _SIZE];
 		public int white = 1;
-		public int black = 2;
+		public int black = -1;
 		public int empty = 0;
 		public int side = 0;
 
 		void displayBoard()
 		{
-			for (int i = 0; i < 8; i++)
+			for (int i = 0; i < _SIZE; i++)
 			{
-				for (int ii = 0; ii < 8; ii++)
+				for (int ii = 0; ii < _SIZE; ii++)
 				{
 					Console.Write(Convert.ToString(GameBoard[i, ii]) + " ");
 					if (ii != 0 && ii % 7 == 0) //Simple way of making it look nice in output for now, might be a better way later
@@ -35,72 +36,57 @@ namespace OthelloAI
 			GameBoard[4, 3] = black;
 		}
 
-		bool isMoveValid(int xcord, int ycord, int color)
+		public bool spaceValid(int x, int y)
 		{
-			bool isValid = false;
-			if (xcord < 0 || xcord > 7) isValid = false;
-			if (ycord < 0 || ycord > 7) isValid = false;
-			if ((GameBoard[xcord,ycord] == black) || (GameBoard[xcord, ycord] == white)) isValid = false;
+			if (x < 0 || y < 0 || x >= _SIZE || y >= _SIZE) return false;
+			else return true;
+		}
 
-				//if (checkDirection(color, xcord, ycord, -1, 1))
-				//{
-					int y = ycord - 2;
-					for (int x = xcord + 2; x > 7; x++)
+		public int moveValue(int x, int y, int color)
+		{
+			//If the space is occupied, return 0
+			if (GameBoard[x, y] != empty) return 0;
+
+			int value = 0;
+			int xDirection; //Horizontal direction
+			int yDirection; //Vertical direction
+			int distance; //Distance
+			int xTemp;
+			int yTemp;
+
+			for (xDirection = -1; xDirection <= 1; xDirection++)
+			{
+				for (yDirection = -1; yDirection <= 1; yDirection++)
+				{
+					if (!(xDirection == 0 && yDirection == 0))
 					{
-						if (color == white)
+						distance = 1;
+						xTemp = x + xDirection;
+						yTemp = y + yDirection;
+						while (spaceValid(xTemp, yTemp) && GameBoard[xTemp, yTemp] == -color)
 						{
-							if (GameBoard[x, y] == white) { isValid = true; }
-							else if (GameBoard[x, y] == black) { continue; }
-							else if (GameBoard[x, y] == empty) { isValid = false; }
+							distance++;
+							xTemp += xDirection;
+							yTemp += yDirection;
 						}
-						else if (color == black)
-						{
-							if (GameBoard[x, y] == black) { isValid = true; }
-							else if (GameBoard[x, y] == white) { continue; }
-							else if (GameBoard[x, y] == empty) { isValid = false; }
-						}
-						y--;
-				//	}
+						if (distance > 1 && spaceValid(xTemp, yTemp) && GameBoard[xTemp, yTemp] == color)
+							value += distance - 1;
+					}
 				}
-
-				//if (checkDirection(color, xcord, ycord, 1, -1))
-				//{
-					int y2 = ycord + 2;
-					for (int x = xcord - 2; x >= 0; x--)
-					{
-						if (color == white)
-						{
-							if (GameBoard[x, y2] == white) isValid = true;
-							else if (GameBoard[x, y2] == black) continue;
-							else if (GameBoard[x, y2] == empty) isValid = false;
-						}
-						else if (color == black)
-						{
-							if (GameBoard[x, y2] == black) { isValid = true; }
-							else if (GameBoard[x, y2] == white) { continue; }
-							else if (GameBoard[x, y2] == empty) { isValid = false; }
-						}
-					y2++;
-			//	}
 			}
-			return isValid;
+			return value;
 		}
 
-		/*
-		bool checkDirection(int color, int x, int y, int x2, int y2)
-		{
-			if ((color == black) && (GameBoard[x + x2, y + y2] == white)) return true;
-			if ((color == white) && (GameBoard[x + x2, y + y2] == black)) return true;
-			else return false;
-		}
-		*/
+
+
+
 
 		public int[,] transformInput(int color)
 		{
 			bool valid = false;
 			int x = 0;
 			int y = 0;
-			int[,] inputBoard = new int[8, 8];
+			int[,] inputBoard = new int[_SIZE, _SIZE];
 			inputBoard = GameBoard;
 
 			while (!valid)
@@ -110,7 +96,7 @@ namespace OthelloAI
 				Console.Write("Enter the second dimension:\n");
 				y = Convert.ToInt16(Console.ReadLine());
 
-				 if (isMoveValid(x, y, side)) 
+				if(moveValue(x, y, color) > 0)
 				{
 					inputBoard[x, y] = color;
 					valid = true;
@@ -137,10 +123,10 @@ namespace OthelloAI
 			}
 		}
 
-		void makeMove(int side)
+		void makeMove(int color)
 		{
 			GameBoard = transformInput(side);
-			if (side == black)
+			if (color == black)
 			{
 				side = white;
 			}
