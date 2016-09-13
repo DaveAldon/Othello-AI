@@ -1,5 +1,9 @@
 *.userprefs
 *.exe
+*.sln
+*.csproj
+*.xml
+*.iml
 *.exe.mdb
 AssemblyInfo.cs
 *.txt
