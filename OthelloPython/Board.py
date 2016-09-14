@@ -1,13 +1,24 @@
 import os
+import json
+import numpy as np
+import requests
 
 class Game(object):
-    def gameBoard(self):
-        boardList = [0] * 8
-        for i in range(8):
-            boardList[i] = [0] * 8
+    def gameBoard():
+        board = np.matrix([['-', '-', '-', '-', '-', '-', '-', '-'],
+                           ['-', '-', '-', '-', '-', '-', '-', '-'],
+                           ['-', '-', '-', '-', '-', '-', '-', '-'],
+                           ['-', '-', '-', '-', '-', '-', '-', '-'],
+                           ['-', '-', '-', '-', '-', '-', '-', '-'],
+                           ['-', '-', '-', '-', '-', '-', '-', '-'],
+                           ['-', '-', '-', '-', '-', '-', '-', '-'],
+                           ['-', '-', '-', '-', '-', '-', '-', '-']])
+        return board
 
-        return boardList
+    print (gameBoard())
 
-    #Prints the pretty square
-    for i in range(1):
-        print ("\n".join(map(str, gameBoard(0))))
+
+    data = {'something': '1'}
+    data_json = json.dumps(data)
+    payload = {'json_payload': data_json, 'apikey': 'APIKEY'}
+    r = requests.get('http://myserver', data=payload)
