@@ -2,6 +2,8 @@ import os
 import json
 import numpy as np
 import requests
+from bs4 import BeautifulSoup
+import urllib2
 
 class Game(object):
     def gameBoard():
@@ -18,7 +20,9 @@ class Game(object):
     print (gameBoard())
 
 
-    data = {'something': '1'}
-    data_json = json.dumps(data)
-    payload = {'json_payload': data_json, 'apikey': 'APIKEY'}
-    r = requests.get('http://myserver', data=payload)
+
+
+    url = urllib2.urlopen("https://www.govtrack.us/data/congress/113/votes/2013/s11/data.json")
+    content = url.read()
+    soup = BeautifulSoup(content)
+    print(content)
